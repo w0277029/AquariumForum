@@ -37,7 +37,7 @@ namespace AquariumForum.Controllers
                 return NotFound();
             }
 
-            ViewData["CommentId"] = id;
+            ViewData["DiscussionId"] = id;
 
             return View();
 
@@ -50,8 +50,10 @@ namespace AquariumForum.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CommentId,Content,CreateDate,DiscussionId")] Comment comment)
+        public async Task<IActionResult> Create([Bind("CommentId,Content,DiscussionId")] Comment comment)
         {
+            comment.CreateDate = DateTime.Now;
+
             if (ModelState.IsValid)
             {
                 _context.Add(comment);

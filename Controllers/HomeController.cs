@@ -26,10 +26,27 @@ namespace AquariumForum.Controllers
         //Home page - display all discussions - ../ or ../Home/Index
         public async Task<IActionResult> Index()
         {
-            // Get the discussions from DB
-            var discussions = await _context.Discussion.ToListAsync();
+
+            //var discussions = await _context.Discussion.ToListAsync();
+
+            // Get the discussions from DB descending, including comments
+            var discussions = await _context.Discussion
+                .OrderByDescending(d => d.CreateDate)
+                .Include(d => d.Comments)
+                .ToListAsync();
 
             return View(discussions);
+        }
+
+        // Display a discussion by ID - ../Home/DiscussionDetails/328
+        public async Task<IActionResult> DiscussionDetails(int id)
+        {
+            // Get discussion from DB by ID
+            var discussion = await _context.Discussion
+                .Include(m => m.Comments)
+                .FirstOrDefaultAsync(m => m.DiscussionId == id);
+
+            return View(discussion);
         }
 
         //public IActionResult Index()

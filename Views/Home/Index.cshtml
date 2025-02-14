@@ -15,10 +15,26 @@
     {
         string imageUrl = Url.Content("/images/" + item.ImageFilename);
 
+        // Source: ChatGPT
+        int commentCount = item.Comments?.Count ?? 0; // Ensure it doesn't break if Comments is null
+        string formattedDate = item.CreateDate.ToString("MMM d, yyyy h:mm tt"); // Format the date/time
+
         <div class="masonry-grid-item">
+            <h5 class="mt-2">
+                <a href="@Url.Action("DiscussionDetails", "Home", new { id = item.DiscussionId })" class="text-dark text-decoration-none">
+                    @item.Title
+                </a>
+            </h5>
+            <p class="text-muted">
+                <i class="fa-regular fa-calendar-days"></i> @formattedDate
+            </p>
             <a href="@Url.Action("DiscussionDetails", "Home", new { id = item.DiscussionId })">
                 <img src="@imageUrl" class="img-fluid" alt="@item.Title" />
             </a>
+            @* Source: ChatGPT *@
+            <p class="text-muted">
+                <i class="fa-regular fa-comment"></i> @commentCount Comments
+            </p>
         </div>
     }
 </div>

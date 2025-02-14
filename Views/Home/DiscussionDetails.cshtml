@@ -1,0 +1,20 @@
+﻿@model AquariumForum.Models.Discussion
+
+@{
+    ViewData["Title"] = "Get Discussion";
+    string imageUrl = Url.Content("/images/" + Model.ImageFilename);
+}
+
+<div class="w-50 mx-auto">
+    <img src="@imageUrl" class="img-fluid" alt="@Model.Title" />
+</div>
+
+<div class="text-secondary">
+    <div>
+        @Model.Title
+    </div>
+    <br />
+    <div>
+        <i class="fa-regular fa-calendar-days"></i> @Model.CreateDate.ToString("MMM d, yyyy")
+    </div>
+</div>
