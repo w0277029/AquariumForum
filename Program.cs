@@ -1,9 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using AquariumForum.Data;
+using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AquariumForumContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AquariumForumContext") ?? throw new InvalidOperationException("Connection string 'AquariumForumContext' not found.")));
+
+
+// Changed RequiredConfirmedAccount to false to allow for easier testing
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<AquariumForumContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -30,5 +35,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// Added as part of Identity setup
+app.MapRazorPages().WithStaticAssets();
 
 app.Run();

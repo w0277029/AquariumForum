@@ -30,20 +30,20 @@ namespace AquariumForum.Controllers
         // POST: Comments/Delete/5
 
         // GET: Comments/Create
-        public IActionResult Create(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public IActionResult Create(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            ViewData["DiscussionId"] = id;
+        //    ViewData["DiscussionId"] = id;
 
-            return View();
+        //    return View();
 
-            //ViewData["DiscussionId"] = new SelectList(_context.Discussion, "DiscussionId", "DiscussionId");
-            //return View();
-        }
+        //    //ViewData["DiscussionId"] = new SelectList(_context.Discussion, "DiscussionId", "DiscussionId");
+        //    //return View();
+        //}
 
         // POST: Comments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using AquariumForum.Models;
 
 namespace AquariumForum.Data
 {
-    public class AquariumForumContext : DbContext
+    // Changed DbContext to IdentityDbContext
+    public class AquariumForumContext : IdentityDbContext<ApplicationUser>
     {
         public AquariumForumContext (DbContextOptions<AquariumForumContext> options)
             : base(options)

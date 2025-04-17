@@ -36,7 +36,9 @@ namespace AquariumForum.Controllers
                 return NotFound();
             }
 
-            var discussion = await _context.Discussion.FirstOrDefaultAsync(m => m.DiscussionId == id);
+            var discussion = await _context.Discussion
+                .Include(d => d.Comments)
+                .FirstOrDefaultAsync(m => m.DiscussionId == id);
 
             if (discussion == null)
             {
@@ -45,6 +47,28 @@ namespace AquariumForum.Controllers
 
             return View(discussion);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddComment(int discussionId, string content)
+        {
+            if (!string.IsNullOrWhiteSpace(content))
+            {
+                var comment = new Comment
+                {
+                    DiscussionId = discussionId,
+                    Content = content,
+                    CreateDate = DateTime.Now
+                };
+
+                _context.Comment.Add(comment);
+
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Details), new { id = discussionId });
+        }
+
 
         // GET: Discussions/Create
         public IActionResult Create()

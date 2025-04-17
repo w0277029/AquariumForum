@@ -9,12 +9,42 @@
     <img src="@imageUrl" class="img-fluid" alt="@Model.Title" />
 </div>
 
-<div class="text-secondary">
+@* <div class="text-secondary"> *@
+@*     <div> *@
+@*         @Model.Title *@
+@*     </div> *@
+@*     <br /> *@
+@*     <div> *@
+@*         <i class="fa-regular fa-calendar-days"></i> @Model.CreateDate.ToString("MMM d, yyyy") *@
+@*     </div> *@
+@* </div> *@
+
+@if (Model.Comments != null && Model.Comments.Any())
+{
     <div>
-        @Model.Title
+        @foreach (var comment in Model.Comments)
+        // .OrderByDescending(c => c.CreateDate)
+        {
+            <p>
+                @comment.Content
+                <a asp-controller="Comments" asp-action="Details" asp-route-id="@comment.CommentId"></a>
+            </p>
+        }
     </div>
-    <br />
-    <div>
-        <i class="fa-regular fa-calendar-days"></i> @Model.CreateDate.ToString("MMM d, yyyy")
+}
+else
+{
+    <div>No Comments</div>
+}
+
+<hr />
+<h5>Add a Comment</h5>
+
+<form asp-action="Create" asp-controller="Comments" method="post">
+    <input type="hidden" name="discussionId" value="@Model.DiscussionId" />
+    <div class="mb-3">
+        <label for="content" class="form-label">Comment:</label>
+        <textarea name="content" class="form-control" rows="3" required></textarea>
     </div>
-</div>
+    <button type="submit" class="btn btn-primary">Post Comment</button>
+</form>

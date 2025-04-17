@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using AquariumForum.Data;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace AquariumForum.Models
@@ -23,5 +24,11 @@ namespace AquariumForum.Models
 
         // Navigation Property
         public List<Comment>? Comments { get; set; } // Nullable
+
+        // Foreign key (AspNetUsers table)
+        public string ApplicationUserId { get; set; } = string.Empty;
+
+        // Navigation property
+        public ApplicationUser? ApplicationUser { get; set; } // nullable!!!
     }
 }
