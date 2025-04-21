@@ -1,4 +1,6 @@
-﻿namespace AquariumForum.Models
+﻿using AquariumForum.Data;
+
+namespace AquariumForum.Models
 {
     public class Comment
     {
@@ -14,5 +16,11 @@
 
         // Navigation Property
         public Discussion? Discussion { get; set; } // Nullable
+
+        // Foreign key (AspNetUsers table)
+        public string ApplicationUserId { get; set; } = string.Empty;
+
+        // Navigation property
+        public ApplicationUser? ApplicationUser { get; set; } // nullable!!!
     }
 }

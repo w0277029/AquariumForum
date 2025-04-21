@@ -7,25 +7,35 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AquariumForum.Data;
 using AquariumForum.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace AquariumForum.Controllers
 {
+    [Authorize]
     public class DiscussionsController : Controller
     {
         private readonly AquariumForumContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         // Constructor
-        public DiscussionsController(AquariumForumContext context)
+        public DiscussionsController(AquariumForumContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        // GET: Discussions
+        // GET: Photos - My Discussions: get all discussions by user id
         public async Task<IActionResult> Index()
         {
-            var discussions = await _context.Discussion.ToListAsync();
+            var userId = _userManager.GetUserId(User);
 
-            return View(await _context.Discussion.ToListAsync());
+            var discussions = await _context.Discussion
+                .Where(m => m.ApplicationUserId == userId) // filter by user id
+                .ToListAsync();
+
+            return View(discussions);
         }
 
         // GET: Discussions/Details/5
@@ -81,10 +91,16 @@ namespace AquariumForum.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,ImageFile,CreateDate")] Discussion discussion)
+        public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,ImageFile")] Discussion discussion)
         {
+            // Set creation date
+            discussion.CreateDate = DateTime.Now;
+
             // Rename the uploaded file to a guid (unique filename). Set before discussion saved in database.
             discussion.ImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile?.FileName);
+
+            // Set the user ID of the logged-in user
+            discussion.ApplicationUserId = _userManager.GetUserId(User);
 
             if (ModelState.IsValid)
             {
@@ -115,8 +131,14 @@ namespace AquariumForum.Controllers
                 return NotFound();
             }
 
-            // Include the Discussions list
-            var discussion = await _context.Discussion.Include(m => m.Comments).FirstOrDefaultAsync(m => m.DiscussionId == id);
+            // Get the logged in User Id
+            var userId = _userManager.GetUserId(User);
+
+            // Include the Comments list
+            var discussion = await _context.Discussion
+                .Include(m => m.Comments)
+                .Where(m => m.ApplicationUserId == userId) // Filter by user id
+                .FirstOrDefaultAsync(m => m.DiscussionId == id);
 
             if (discussion == null)
             {
@@ -130,7 +152,7 @@ namespace AquariumForum.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFilename,CreateDate")] Discussion discussion)
+        public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFilename,ApplicationUserId")] Discussion discussion)
         {
             if (id != discussion.DiscussionId)
             {
@@ -168,8 +190,13 @@ namespace AquariumForum.Controllers
                 return NotFound();
             }
 
+            // Get the logged in User Id
+            var userId = _userManager.GetUserId(User);
+
             var discussion = await _context.Discussion
+                .Where(m => m.ApplicationUserId == userId) // Filter by user id
                 .FirstOrDefaultAsync(m => m.DiscussionId == id);
+
             if (discussion == null)
             {
                 return NotFound();
@@ -183,8 +210,18 @@ namespace AquariumForum.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var discussion = await _context.Discussion.FindAsync(id);
-            if (discussion != null)
+            // Get the logged in User Id
+            var userId = _userManager.GetUserId(User);
+
+            var discussion = await _context.Discussion
+                .Where(m => m.ApplicationUserId == userId) // Filter by user id
+                .FirstOrDefaultAsync(m => m.DiscussionId == id);
+
+            if (discussion == null)
+            {
+                return NotFound();
+            }
+            else
             {
                 _context.Discussion.Remove(discussion);
             }

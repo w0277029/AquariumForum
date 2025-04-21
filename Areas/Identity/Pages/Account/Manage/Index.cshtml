@@ -24,7 +24,8 @@
             @* BEGIN: ApplicationUser custom fields*@
             @if (!string.IsNullOrEmpty(Model.Input.ImageFilename)){
                 <div class="mb-3">
-                    <img src="~/profile_img/@Model.Input.ImageFilename" class="profile-thumbnail" />
+                    @* <img src="~/profile_img/@Model.Input.ImageFilename" class="profile-thumbnail" /> *@
+                    <img src="~/profile_img/@Model.Input.ImageFilename" alt="Profile image" class="rounded-circle" style="max-width: 150px; height: 150px; object-fit: cover;" />
                 </div>
             }
             <div class="mb-3">

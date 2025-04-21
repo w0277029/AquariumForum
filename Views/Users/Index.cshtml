@@ -1,0 +1,17 @@
+﻿@model AquariumForum.Data.ApplicationUser
+
+@{
+    ViewData["Title"] = "User Profile";
+}
+
+<h1 class="fw-bold">@Model.Name's Profile</h1>
+
+<div class="d-flex align-items-center mb-3">
+    <img src="~/profile_img/@Model.ImageFilename" class="rounded-circle me-3" width="100" height="100" alt="Profile image" />
+    <div>
+        <p><strong>Name: </strong>@Model.Name</p>
+        <p><strong>Location: </strong>@Model.Location</p>
+        <p><strong>Bio: </strong>@Model.Bio</p>
+        <p><strong>Available for hire: </strong>@(Model.IsForHire ? "Yes" : "No")</p>
+    </div>
+</div>

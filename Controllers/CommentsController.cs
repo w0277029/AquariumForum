@@ -8,17 +8,22 @@ using Microsoft.EntityFrameworkCore;
 using AquariumForum.Data;
 using AquariumForum.Models;
 using Azure;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace AquariumForum.Controllers
 {
+    [Authorize]
     public class CommentsController : Controller
     {
         private readonly AquariumForumContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         // Constructor
-        public CommentsController(AquariumForumContext context)
+        public CommentsController(AquariumForumContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // Deleted the following actions:
@@ -53,16 +58,15 @@ namespace AquariumForum.Controllers
         public async Task<IActionResult> Create([Bind("CommentId,Content,DiscussionId")] Comment comment)
         {
             comment.CreateDate = DateTime.Now;
+            comment.ApplicationUserId = _userManager.GetUserId(User);
 
             if (ModelState.IsValid)
             {
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
 
-                //// TODO: Re-direct to Get Discussion page
-                //return RedirectToAction("Edit", "Discussions", new { id = comment.DiscussionId });
-
-                return RedirectToAction("Index", "Home"); // Placeholder
+                // Re-direct to Get Discussion page
+                return RedirectToAction("Details", "Discussions", new { id = comment.DiscussionId });
             }
             ViewData["DiscussionId"] = comment.DiscussionId;
 

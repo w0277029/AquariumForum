@@ -1,0 +1,44 @@
+﻿@model List<AquariumForum.Models.Discussion>
+
+@{
+    ViewData["Title"] = "User Profile";
+
+    var user = (AquariumForum.Data.ApplicationUser)ViewBag.User;
+}
+
+<h1>@user.Name's Profile</h1>
+
+<div class="d-flex align-items-center mb-4">
+    <img src="~/profile_img/@user.ImageFilename" class="rounded-circle me-3" width="100" height="100" alt="Profile image" />
+    <div>
+        <p><strong>Location: </strong>@user.Location</p>
+    </div>
+</div>
+
+<hr />
+
+<h4>Discussion Threads</h4>
+
+@* Source: ChatGPT *@
+<div class="masonry-grid">
+    @foreach (var item in Model)
+    {
+        string imageUrl = Url.Content("~/images/" + item.ImageFilename);
+        int commentCount = item.Comments?.Count ?? 0;
+
+            <div class="masonry-grid-item">
+                <h5>
+                    <a href="@Url.Action("DiscussionDetails", "Home", new { id = item.DiscussionId })" class="text-dark text-decoration-none">
+                    @item.Title
+                    </a>
+                </h5>
+                <a href="@Url.Action("DiscussionDetails", "Home", new { id = item.DiscussionId })">
+                    <img src="@imageUrl" class="img-fluid" alt="@item.Title" />
+                </a>
+                <p class="text-muted">
+                    <i class="fa-regular fa-calendar-days"></i> @item.CreateDate.ToString("MMM d, yyyy h:mm tt")<br />
+                    <i class="fa-regular fa-comment"></i> @commentCount Comments
+                </p>
+            </div>
+    }
+</div>

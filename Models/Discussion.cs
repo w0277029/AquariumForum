@@ -23,7 +23,7 @@ namespace AquariumForum.Models
         public DateTime CreateDate { get; set; } = DateTime.Now;
 
         // Navigation Property
-        public List<Comment>? Comments { get; set; } // Nullable
+        public List<Comment> Comments { get; set; } = new(); // Non-nullable with default value (source: ChatGPT)
 
         // Foreign key (AspNetUsers table)
         public string ApplicationUserId { get; set; } = string.Empty;

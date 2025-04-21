@@ -5,6 +5,15 @@
     string imageUrl = Url.Content("/images/" + Model.ImageFilename);
 }
 
+
+@* Discussion Header *@
+<div class="d-flex align-items-center mb-3">
+    <img src="~/profile_img/@Model.ApplicationUser.ImageFilename" class="rounded-circle me-2" width="40" height="40" />
+    <a href="@Url.Action("Profile", "Users", new { id = Model.ApplicationUser.Id })" class="fw-bold text-decoration-none">
+        @Model.ApplicationUser.Name
+    </a>
+</div>
+
 <div class="w-50 mx-auto">
     <img src="@imageUrl" class="img-fluid" alt="@Model.Title" />
 </div>
@@ -21,14 +30,28 @@
 
 @if (Model.Comments != null && Model.Comments.Any())
 {
+    <h5>Comments</h5>
     <div>
-        @foreach (var comment in Model.Comments)
+        @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreateDate))
         // .OrderByDescending(c => c.CreateDate)
         {
-            <p>
-                @comment.Content
-                <a asp-controller="Comments" asp-action="Details" asp-route-id="@comment.CommentId"></a>
-            </p>
+            <div class="border p-3 mb-3 rounded bg-light">
+                <div class="text-muted small mb-1">
+                    Posted by
+                    <a href="@Url.Action("Profile", "Users", new { id = comment.ApplicationUser.Id })" class="fw-semibold">
+                        @comment.ApplicationUser.Name
+                    </a>
+                    at @comment.CreateDate.ToString("MMM d, yyyy h:mm tt")
+                </div>
+                <div>
+                    @comment.Content
+                 </div>
+            </div>
+
+            @* <p> *@
+            @*     @comment.Content *@
+            @*     <a asp-controller="Comments" asp-action="Details" asp-route-id="@comment.CommentId"></a> *@
+            @* </p> *@
         }
     </div>
 }
